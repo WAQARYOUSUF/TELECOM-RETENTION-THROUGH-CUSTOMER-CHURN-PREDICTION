@@ -11,12 +11,16 @@ body {
     margin: 0;
     padding: 20px;
 }
-.header { text-align: center; color: white; margin-bottom: 20px; }
+.header {
+    text-align: center;
+    color: white;
+    margin-bottom: 20px;
+}
 .header h1 { margin-bottom: 5px; }
 .header h3 { font-weight: normal; font-size: 18px; }
 
 .container {
-    max-width: 800px;
+    max-width: 700px;
     margin: auto;
     background: white;
     border-radius: 10px;
@@ -24,38 +28,101 @@ body {
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
-/* Step Indicator & Progress Bar */
-.step-indicator { font-weight: bold; margin-bottom: 5px; color: #1e3a8a; }
-.progress-container { width: 100%; background-color: #e2e8f0; border-radius: 5px; height: 10px; margin-bottom: 15px; }
-.progress-bar { height: 100%; width: 0%; background-color: #3b82f6; border-radius: 5px; transition: width 0.3s ease-in-out; }
-
-/* Form Steps */
-.step { display: none; }
-.form-group { display: flex; flex-direction: column; margin-bottom: 10px; }
-label { font-weight: bold; margin-bottom: 5px; color: #1e3a8a; }
-input, select { padding: 8px; font-size: 16px; border: 2px solid #3b82f6; border-radius: 5px; }
-input:focus, select:focus { border-color: #1e3a8a; outline: none; }
-
-/* Buttons */
-button { cursor: pointer; }
-.next-btn, .prev-btn, .submit-btn {
-    background-color: #1e3a8a;
-    color: white;
-    padding: 10px 15px;
-    font-size: 16px;
-    border: none;
-    border-radius: 5px;
-    margin-top: 10px;
+/* Step wizard */
+.step {
+    display: none;
+    padding: 15px 0;
 }
-.next-btn:hover, .prev-btn:hover, .submit-btn:hover { background-color: #163a6d; }
-.prefill-buttons { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 15px; }
-.prefill-btn { flex: 1 1 45%; padding: 10px; font-size: 16px; border-radius: 5px; border: none; color: white; }
+.step.active { display: block; }
+.step-card {
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+    color: #1e3a8a;
+}
+input, select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 12px;
+    border: 2px solid #3b82f6;
+    border-radius: 5px;
+    font-size: 16px;
+}
+input:focus, select:focus {
+    border-color: #1e3a8a;
+    outline: none;
+}
+
+.prefill-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+}
+.prefill-btn {
+    flex: 1 1 45%;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    color: white;
+}
 .prefill-churn { background-color: #dc2626; }
 .prefill-nonchurn { background-color: #16a34a; }
 
-.output-box { background-color: #1e3a8a; color: white; padding: 15px; font-size: 18px; border-radius: 5px; margin-top: 15px; text-align: center; }
+.nav-btns {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+.nav-btns button {
+    padding: 10px 15px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    color: white;
+}
+.prev-btn { background-color: #6b7280; }
+.next-btn { background-color: #1e3a8a; }
+.next-btn:hover { background-color: #163a6d; }
+.prev-btn:hover { background-color: #4b5563; }
 
-@media(max-width: 700px) { .prefill-btn { flex: 1 1 100%; } }
+.submit-btn {
+    width: 100%;
+    background-color: #1e3a8a;
+    color: white;
+    padding: 12px;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+.submit-btn:hover { background-color: #163a6d; }
+
+.output-box {
+    background-color: #1e3a8a;
+    color: white;
+    padding: 15px;
+    font-size: 18px;
+    border-radius: 5px;
+    margin-top: 15px;
+    text-align: center;
+}
+
+@media(max-width:700px) {
+    .prefill-btn { flex: 1 1 100%; }
+}
 </style>
 </head>
 <body>
@@ -66,56 +133,83 @@ button { cursor: pointer; }
 </div>
 
 <div class="container">
-
     <div class="prefill-buttons">
         <button type="button" class="prefill-btn prefill-churn" onclick="fillChurn()">Churn Customer</button>
         <button type="button" class="prefill-btn prefill-nonchurn" onclick="fillNonChurn()">Non-Churn Customer</button>
     </div>
 
-    <!-- Step Indicator & Progress -->
-    <div class="step-indicator" id="stepIndicator">Step 1 of 3</div>
-    <div class="progress-container">
-        <div class="progress-bar" id="progressBar"></div>
-    </div>
-
     <form method="POST" action="{{ url_for('predict') }}">
-
         <!-- Step 1: Customer Info -->
-        <div class="step">
-            <div class="form-group"><label>SeniorCitizen</label><select id="query1" name="query1"><option value="0">No</option><option value="1">Yes</option></select></div>
-            <div class="form-group"><label>Gender</label><select id="query4" name="query4"><option value="Male">Male</option><option value="Female">Female</option></select></div>
-            <div class="form-group"><label>Partner</label><select id="query5" name="query5"><option value="Yes">Yes</option><option value="No">No</option></select></div>
-            <div class="form-group"><label>Dependents</label><select id="query6" name="query6"><option value="Yes">Yes</option><option value="No">No</option></select></div>
-            <button type="button" class="next-btn" onclick="nextStep()">Next</button>
+        <div class="step step-card active">
+            <h3>Customer Info</h3>
+            <label>SeniorCitizen</label>
+            <select id="query1" name="query1"><option value="0">No</option><option value="1">Yes</option></select>
+
+            <label>Gender</label>
+            <select id="query4" name="query4"><option value="Male">Male</option><option value="Female">Female</option></select>
+
+            <label>Partner</label>
+            <select id="query5" name="query5"><option value="Yes">Yes</option><option value="No">No</option></select>
+
+            <label>Dependents</label>
+            <select id="query6" name="query6"><option value="Yes">Yes</option><option value="No">No</option></select>
+
+            <div class="nav-btns">
+                <span></span>
+                <button type="button" class="next-btn" onclick="nextStep()">Next</button>
+            </div>
         </div>
 
         <!-- Step 2: Services -->
-        <div class="step">
-            <div class="form-group"><label>PhoneService</label><select id="query7" name="query7"><option value="Yes">Yes</option><option value="No">No</option></select></div>
-            <div class="form-group"><label>MultipleLines</label><select id="query8" name="query8"><option value="Yes">Yes</option><option value="No">No</option></select></div>
-            <div class="form-group"><label>InternetService</label><select id="query9" name="query9"><option value="DSL">DSL</option><option value="Fiber optic">Fiber optic</option><option value="No">No</option></select></div>
-            <div class="form-group"><label>OnlineSecurity</label><select id="query10" name="query10"><option value="Yes">Yes</option><option value="No">No</option></select></div>
-            <div class="form-group"><label>OnlineBackup</label><select id="query11" name="query11"><option value="Yes">Yes</option><option value="No">No</option></select></div>
-            <div class="form-group"><label>DeviceProtection</label><select id="query12" name="query12"><option value="Yes">Yes</option><option value="No">No</option></select></div>
-            <div class="form-group"><label>TechSupport</label><select id="query13" name="query13"><option value="Yes">Yes</option><option value="No">No</option></select></div>
-            <div class="form-group"><label>StreamingTV</label><select id="query14" name="query14"><option value="Yes">Yes</option><option value="No">No</option></select></div>
-            <div class="form-group"><label>StreamingMovies</label><select id="query15" name="query15"><option value="Yes">Yes</option><option value="No">No</option></select></div>
-            <button type="button" class="prev-btn" onclick="prevStep()">Previous</button>
-            <button type="button" class="next-btn" onclick="nextStep()">Next</button>
+        <div class="step step-card">
+            <h3>Services</h3>
+            <label>PhoneService</label>
+            <select id="query7" name="query7"><option value="Yes">Yes</option><option value="No">No</option></select>
+
+            <label>MultipleLines</label>
+            <select id="query8" name="query8"><option value="Yes">Yes</option><option value="No">No</option></select>
+
+            <label>InternetService</label>
+            <select id="query9" name="query9"><option value="DSL">DSL</option><option value="Fiber optic">Fiber optic</option><option value="No">No</option></select>
+
+            <label>OnlineSecurity</label>
+            <select id="query10" name="query10"><option value="Yes">Yes</option><option value="No">No</option></select>
+
+            <label>OnlineBackup</label>
+            <select id="query11" name="query11"><option value="Yes">Yes</option><option value="No">No</option></select>
+
+            <div class="nav-btns">
+                <button type="button" class="prev-btn" onclick="prevStep()">Previous</button>
+                <button type="button" class="next-btn" onclick="nextStep()">Next</button>
+            </div>
         </div>
 
         <!-- Step 3: Billing & Contract -->
-        <div class="step">
-            <div class="form-group"><label>Contract</label><select id="query16" name="query16"><option value="Month-to-month">Month-to-month</option><option value="One year">One year</option><option value="Two year">Two year</option></select></div>
-            <div class="form-group"><label>PaperlessBilling</label><select id="query17" name="query17"><option value="Yes">Yes</option><option value="No">No</option></select></div>
-            <div class="form-group"><label>PaymentMethod</label><select id="query18" name="query18"><option value="Electronic check">Electronic check</option><option value="Mailed check">Mailed check</option><option value="Bank transfer">Bank transfer</option><option value="Credit card">Credit card</option></select></div>
-            <div class="form-group"><label>MonthlyCharges</label><input type="number" id="query2" name="query2" required></div>
-            <div class="form-group"><label>TotalCharges</label><input type="number" id="query3" name="query3" required></div>
-            <div class="form-group"><label>Tenure</label><input type="number" id="query19" name="query19" required></div>
-            <button type="button" class="prev-btn" onclick="prevStep()">Previous</button>
-            <button type="submit" class="submit-btn">Submit</button>
-        </div>
+        <div class="step step-card">
+            <h3>Billing & Contract</h3>
+            <label>Contract</label>
+            <select id="query16" name="query16"><option value="Month-to-month">Month-to-month</option><option value="One year">One year</option><option value="Two year">Two year</option></select>
 
+            <label>PaperlessBilling</label>
+            <select id="query17" name="query17"><option value="Yes">Yes</option><option value="No">No</option></select>
+
+            <label>PaymentMethod</label>
+            <select id="query18" name="query18"><option value="Electronic check">Electronic check</option><option value="Mailed check">Mailed check</option><option value="Bank transfer">Bank transfer</option><option value="Credit card">Credit card</option></select>
+
+            <label>MonthlyCharges</label>
+            <input type="number" id="query2" name="query2" required>
+
+            <label>TotalCharges</label>
+            <input type="number" id="query3" name="query3" required>
+
+            <label>Tenure</label>
+            <input type="number" id="query19" name="query19" required>
+
+            <div class="nav-btns">
+                <button type="button" class="prev-btn" onclick="prevStep()">Previous</button>
+                <button type="submit" class="submit-btn">Submit</button>
+            </div>
+        </div>
     </form>
 
     <div id="output1" class="output-box">{{ output1 }}</div>
@@ -123,98 +217,82 @@ button { cursor: pointer; }
 </div>
 
 <script>
-var currentStep = 0;
-showStep(currentStep);
-
+let currentStep = 0;
 function showStep(n) {
-    var steps = document.getElementsByClassName("step");
-    steps[n].style.display = "block";
-
-    // Progress bar
-    var progress = ((n+1)/steps.length)*100;
-    document.getElementById("progressBar").style.width = progress+"%";
-    document.getElementById("stepIndicator").innerText = "Step "+(n+1)+" of "+steps.length;
-
-    // Hide other steps
-    for(var i=0;i<steps.length;i++){
-        if(i!=n) steps[i].style.display="none";
-    }
+    const steps = document.getElementsByClassName("step");
+    for (let i=0; i<steps.length; i++) steps[i].classList.remove("active");
+    steps[n].classList.add("active");
 }
-
 function nextStep() {
-    var steps = document.getElementsByClassName("step");
-    if(currentStep < steps.length-1) { 
-        currentStep++; 
-        showStep(currentStep); 
-        window.scrollTo({ top: 0, behavior: 'smooth' }); // auto scroll to top
+    const steps = document.getElementsByClassName("step");
+    if(currentStep < steps.length-1) {
+        currentStep++;
+        showStep(currentStep);
+        window.scrollTo({top:0, behavior:'smooth'});
     }
 }
-
 function prevStep() {
-    if(currentStep > 0) { 
-        currentStep--; 
-        showStep(currentStep); 
-        window.scrollTo({ top: 0, behavior: 'smooth' }); // auto scroll to top
+    if(currentStep > 0) {
+        currentStep--;
+        showStep(currentStep);
+        window.scrollTo({top:0, behavior:'smooth'});
     }
 }
 
+// Pre-fill buttons
+function fillChurn() {
+    document.getElementById("query1").value="1";
+    document.getElementById("query2").value=90;
+    document.getElementById("query3").value=4000;
+    document.getElementById("query4").value="Female";
+    document.getElementById("query5").value="No";
+    document.getElementById("query6").value="No";
+    document.getElementById("query7").value="Yes";
+    document.getElementById("query8").value="No";
+    document.getElementById("query9").value="Fiber optic";
+    document.getElementById("query10").value="No";
+    document.getElementById("query11").value="No";
+    document.getElementById("query16").value="Month-to-month";
+    document.getElementById("query17").value="Yes";
+    document.getElementById("query18").value="Electronic check";
+    document.getElementById("query19").value=5;
+}
+
+function fillNonChurn() {
+    document.getElementById("query1").value="0";
+    document.getElementById("query2").value=40;
+    document.getElementById("query3").value=1200;
+    document.getElementById("query4").value="Male";
+    document.getElementById("query5").value="Yes";
+    document.getElementById("query6").value="Yes";
+    document.getElementById("query7").value="Yes";
+    document.getElementById("query8").value="Yes";
+    document.getElementById("query9").value="DSL";
+    document.getElementById("query10").value="Yes";
+    document.getElementById("query11").value="Yes";
+    document.getElementById("query16").value="Two year";
+    document.getElementById("query17").value="No";
+    document.getElementById("query18").value="Bank transfer";
+    document.getElementById("query19").value=36;
+}
 
 // Color-coded output
 function setOutputColor() {
     const outputDiv = document.getElementById("output1");
-    if (!outputDiv) return;
+    if(!outputDiv) return;
     const text = outputDiv.innerText.toLowerCase();
-    if(text.includes("likely to be churned")) outputDiv.style.backgroundColor="#dc2626";
-    else if(text.includes("likely to continue")) outputDiv.style.backgroundColor="#16a34a";
-    else outputDiv.style.backgroundColor="#1e3a8a";
-    outputDiv.style.color="white";
+    if(text.includes("likely to be churned")) {
+        outputDiv.style.backgroundColor="#dc2626";
+        outputDiv.style.color="white";
+    } else if(text.includes("likely to continue")) {
+        outputDiv.style.backgroundColor="#16a34a";
+        outputDiv.style.color="white";
+    } else {
+        outputDiv.style.backgroundColor="#1e3a8a";
+        outputDiv.style.color="white";
+    }
 }
 setOutputColor();
-
-// Pre-fill buttons
-function fillChurn() {
-    document.getElementById("query1").value = "1";
-    document.getElementById("query2").value = 90;
-    document.getElementById("query3").value = 4000;
-    document.getElementById("query4").value = "Female";
-    document.getElementById("query5").value = "No";
-    document.getElementById("query6").value = "No";
-    document.getElementById("query7").value = "Yes";
-    document.getElementById("query8").value = "No";
-    document.getElementById("query9").value = "Fiber optic";
-    document.getElementById("query10").value = "No";
-    document.getElementById("query11").value = "No";
-    document.getElementById("query12").value = "No";
-    document.getElementById("query13").value = "No";
-    document.getElementById("query14").value = "Yes";
-    document.getElementById("query15").value = "Yes";
-    document.getElementById("query16").value = "Month-to-month";
-    document.getElementById("query17").value = "Yes";
-    document.getElementById("query18").value = "Electronic check";
-    document.getElementById("query19").value = 5;
-}
-
-function fillNonChurn() {
-    document.getElementById("query1").value = "0";
-    document.getElementById("query2").value = 40;
-    document.getElementById("query3").value = 1200;
-    document.getElementById("query4").value = "Male";
-    document.getElementById("query5").value = "Yes";
-    document.getElementById("query6").value = "Yes";
-    document.getElementById("query7").value = "Yes";
-    document.getElementById("query8").value = "Yes";
-    document.getElementById("query9").value = "DSL";
-    document.getElementById("query10").value = "Yes";
-    document.getElementById("query11").value = "Yes";
-    document.getElementById("query12").value = "Yes";
-    document.getElementById("query13").value = "Yes";
-    document.getElementById("query14").value = "No";
-    document.getElementById("query15").value = "No";
-    document.getElementById("query16").value = "Two year";
-    document.getElementById("query17").value = "No";
-    document.getElementById("query18").value = "Bank transfer";
-    document.getElementById("query19").value = 36;
-}
 </script>
 
 </body>
