@@ -168,36 +168,140 @@
                 ">Fill – Likely to Stay 🟢</button>
             </div>
 
-            <!-- Your Existing Form Fields -->
-            <div class="form-group purple-border">
+            <!-- Full Form Fields -->
+            <div class="form-group">
                 <label for="query1">SeniorCitizen:</label>
                 <select class="form-control" id="query1" name="query1">
                     <option value="0">No</option>
                     <option value="1">Yes</option>
                 </select>
             </div>
-            <div class="form-group purple-border">
+            <div class="form-group">
                 <label for="query2">MonthlyCharges:</label>
                 <input type="number" class="form-control" id="query2" name="query2" required>
             </div>
-            <div class="form-group purple-border">
+            <div class="form-group">
                 <label for="query3">TotalCharges:</label>
                 <input type="number" class="form-control" id="query3" name="query3" required>
             </div>
-            <div class="form-group purple-border">
+            <div class="form-group">
                 <label for="query4">Gender:</label>
                 <select class="form-control" id="query4" name="query4">
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                 </select>
             </div>
-
-            <!-- ... (all other form fields) ... -->
+            <div class="form-group">
+                <label for="query5">Partner:</label>
+                <select class="form-control" id="query5" name="query5">
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="query6">Dependents:</label>
+                <select class="form-control" id="query6" name="query6">
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="query7">PhoneService:</label>
+                <select class="form-control" id="query7" name="query7">
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="query8">MultipleLines:</label>
+                <select class="form-control" id="query8" name="query8">
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="query9">InternetService:</label>
+                <select class="form-control" id="query9" name="query9">
+                    <option value="DSL">DSL</option>
+                    <option value="Fiber optic">Fiber optic</option>
+                    <option value="No">No</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="query10">OnlineSecurity:</label>
+                <select class="form-control" id="query10" name="query10">
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="query11">OnlineBackup:</label>
+                <select class="form-control" id="query11" name="query11">
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="query12">DeviceProtection:</label>
+                <select class="form-control" id="query12" name="query12">
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="query13">TechSupport:</label>
+                <select class="form-control" id="query13" name="query13">
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="query14">StreamingTV:</label>
+                <select class="form-control" id="query14" name="query14">
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="query15">StreamingMovies:</label>
+                <select class="form-control" id="query15" name="query15">
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="query16">Contract:</label>
+                <select class="form-control" id="query16" name="query16">
+                    <option value="Month-to-month">Month-to-month</option>
+                    <option value="One year">One year</option>
+                    <option value="Two year">Two year</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="query17">PaperlessBilling:</label>
+                <select class="form-control" id="query17" name="query17">
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="query18">PaymentMethod:</label>
+                <select class="form-control" id="query18" name="query18">
+                    <option value="Electronic check">Electronic check</option>
+                    <option value="Mailed check">Mailed check</option>
+                    <option value="Bank transfer">Bank transfer</option>
+                    <option value="Credit card">Credit card</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="query19">Tenure:</label>
+                <input type="number" class="form-control" id="query19" name="query19" required>
+            </div>
 
             <button type="submit" class="btn-primary">SUBMIT</button>
         </form>
 
-        <!-- Output Boxes with Color-Coding -->
+        <!-- Output Boxes -->
         <div class="output-box {% if 'churned' in output1 %}churn{% else %}safe{% endif %}" id="output1">
             {{output1}}
         </div>
