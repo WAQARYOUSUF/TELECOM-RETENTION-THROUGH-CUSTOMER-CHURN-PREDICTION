@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 # ----------------- Load Model and Dataset -----------------
 
-df_1 = pd.read_csv("first_telc.csv")  # Make sure this is deployed
+df_1 = pd.read_csv("first_telc.csv")  # Ensure this is deployed
 model = pickle.load(open("model.sav", "rb"))
 model_columns = pickle.load(open("model_columns.pkl", "rb"))
 
@@ -23,26 +23,26 @@ def predict():
     app.logger.info("Received POST request")  # Log POST
 
     try:
-        # ----------- GET INPUTS -----------
-        inputQuery1 = int(request.form["query1"])
-        inputQuery2 = float(request.form["query2"])
-        inputQuery3 = float(request.form["query3"])
-        inputQuery4 = request.form["query4"]
-        inputQuery5 = request.form["query5"]
-        inputQuery6 = request.form["query6"]
-        inputQuery7 = request.form["query7"]
-        inputQuery8 = request.form["query8"]
-        inputQuery9 = request.form["query9"]
-        inputQuery10 = request.form["query10"]
-        inputQuery11 = request.form["query11"]
-        inputQuery12 = request.form["query12"]
-        inputQuery13 = request.form["query13"]
-        inputQuery14 = request.form["query14"]
-        inputQuery15 = request.form["query15"]
-        inputQuery16 = request.form["query16"]
-        inputQuery17 = request.form["query17"]
-        inputQuery18 = request.form["query18"]
-        inputQuery19 = int(request.form["query19"])
+        # ----------- GET INPUTS (Safe Parsing) -----------
+        inputQuery1 = int(request.form.get("query1", 0))
+        inputQuery2 = float(request.form.get("query2", 0.0))
+        inputQuery3 = float(request.form.get("query3", 0.0))
+        inputQuery4 = request.form.get("query4", "Male")
+        inputQuery5 = request.form.get("query5", "No")
+        inputQuery6 = request.form.get("query6", "No")
+        inputQuery7 = request.form.get("query7", "No")
+        inputQuery8 = request.form.get("query8", "No")
+        inputQuery9 = request.form.get("query9", "No")
+        inputQuery10 = request.form.get("query10", "No")
+        inputQuery11 = request.form.get("query11", "No")
+        inputQuery12 = request.form.get("query12", "No")
+        inputQuery13 = request.form.get("query13", "No")
+        inputQuery14 = request.form.get("query14", "No")
+        inputQuery15 = request.form.get("query15", "No")
+        inputQuery16 = request.form.get("query16", "Month-to-month")
+        inputQuery17 = request.form.get("query17", "No")
+        inputQuery18 = request.form.get("query18", "Electronic check")
+        inputQuery19 = int(request.form.get("query19", 1))
     except Exception as e:
         return render_template("home.html", output1=f"Input Error: {e}", output2="")
 
