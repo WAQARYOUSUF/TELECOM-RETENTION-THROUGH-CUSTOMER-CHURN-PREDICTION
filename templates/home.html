@@ -94,6 +94,28 @@
     .safe {
         color: green;
         font-weight: bold;
+        /* Output box colors */
+.output-box {
+    font-size: 20px;
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    margin-top: 10px;
+    color: white;
+    font-weight: bold;
+}
+
+/* Red background for churn */
+.output-box.churn {
+    background-color: #dc2626;  /* Tailwind red-600 */
+}
+
+/* Green background for safe */
+.output-box.safe {
+    background-color: #16a34a;  /* Tailwind green-600 */
+}
+
     }
 </style>
 </head>
@@ -308,16 +330,13 @@
     <div class="row">
     <div class="col-sm-9">
         <!-- Prediction Result with dynamic color -->
-        <div class="form-control" id="output1" name="output1" style="font-size: 20px; width: 100%; padding: 10px;" autofocus>
-            <span class="{% if 'likely to be churned' in output1 %}churned{% else %}safe{% endif %}">
-                {{ output1 }}
-            </span>
-        </div>
+       <div class="form-control output-box {% if 'churned' in output1 %}churn{% else %}safe{% endif %}" id="output1" name="output1">
+    {{output1}}
+</div>
+<div class="form-control output-box {% if 'churned' in output1 %}churn{% else %}safe{% endif %}" id="output2" name="output2">
+    {{output2}}
+</div>
 
-        <!-- Churn Probability -->
-        <div class="form-control" id="output2" name="output2" style="font-size: 20px; width: 100%; padding: 10px;" autofocus>
-            {{ output2 }}
-        </div>
     </div>
 </div>
 
