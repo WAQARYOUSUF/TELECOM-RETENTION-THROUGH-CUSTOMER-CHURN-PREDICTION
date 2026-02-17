@@ -1,313 +1,221 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Churn Prediction</title>
-    <style>
-        body {
-            background: linear-gradient(to right, #1e3a8a, #3b82f6, #e2e8f0);
-            font-family: Arial, sans-serif;
-            color: #333;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customer Churn Prediction</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right, #1e3a8a, #3b82f6, #e2e8f0);
+    margin: 0;
+    padding: 20px;
+}
+.header { text-align: center; color: white; margin-bottom: 20px; }
+.header h1 { margin-bottom: 5px; }
+.header h3 { font-weight: normal; font-size: 18px; }
 
-        .marquee-container {
-            width: 100%;
-            background: #1e3a8a;
-            padding: 10px 0;
-            color: white;
-            font-size: 18px;
-            font-weight: bold;
-            text-align: center;
-        }
+.container {
+    max-width: 800px;
+    margin: auto;
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
 
-        .container {
-            background: #ffffff;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 600px;
-            margin-top: 20px;
-        }
+/* Step Indicator & Progress Bar */
+.step-indicator { font-weight: bold; margin-bottom: 5px; color: #1e3a8a; }
+.progress-container { width: 100%; background-color: #e2e8f0; border-radius: 5px; height: 10px; margin-bottom: 15px; }
+.progress-bar { height: 100%; width: 0%; background-color: #3b82f6; border-radius: 5px; transition: width 0.3s ease-in-out; }
 
-        .form-group {
-            margin-bottom: 15px;
-        }
+/* Form Steps */
+.step { display: none; }
+.form-group { display: flex; flex-direction: column; margin-bottom: 10px; }
+label { font-weight: bold; margin-bottom: 5px; color: #1e3a8a; }
+input, select { padding: 8px; font-size: 16px; border: 2px solid #3b82f6; border-radius: 5px; }
+input:focus, select:focus { border-color: #1e3a8a; outline: none; }
 
-        .form-group label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 5px;
-            color: #1e3a8a;
-        }
+/* Buttons */
+button { cursor: pointer; }
+.next-btn, .prev-btn, .submit-btn {
+    background-color: #1e3a8a;
+    color: white;
+    padding: 10px 15px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+.next-btn:hover, .prev-btn:hover, .submit-btn:hover { background-color: #163a6d; }
+.prefill-buttons { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 15px; }
+.prefill-btn { flex: 1 1 45%; padding: 10px; font-size: 16px; border-radius: 5px; border: none; color: white; }
+.prefill-churn { background-color: #dc2626; }
+.prefill-nonchurn { background-color: #16a34a; }
 
-        .form-control {
-            margin-top: 20px;
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #3b82f6;
-            border-radius: 5px;
-            font-size: 16px;
-            transition: all 0.3s ease-in-out;
-        }
+.output-box { background-color: #1e3a8a; color: white; padding: 15px; font-size: 18px; border-radius: 5px; margin-top: 15px; text-align: center; }
 
-        .form-control:focus {
-            border-color: #ffffff;
-            box-shadow: 0px 0px 8px rgba(59, 130, 246, 0.5);
-            outline: none;
-        }
-
-        .btn-primary {
-            background-color: #1e3a8a;
-            color: white;
-            border: none;
-            padding: 12px;
-            font-size: 18px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: 0.3s ease-in-out;
-            margin-top: 10px;
-        }
-
-        .btn-primary:hover {
-            background-color: #163a6d;
-            transform: scale(1.05);
-        }
-
-        /* Output box colors */
-        .output-box {
-            font-size: 20px;
-            width: 100%;
-            padding: 10px;
-            border-radius: 5px;
-            text-align: center;
-            margin-top: 10px;
-            color: white;
-            font-weight: bold;
-        }
-        .output-box.churn {
-            background-color: #dc2626;  /* red */
-        }
-        .output-box.safe {
-            background-color: #16a34a;  /* green */
-        }
-
-        @media (max-width: 600px) {
-            .container {
-                width: 90%;
-            }
-        }
-
-        .test-buttons {
-            margin-bottom: 20px;
-        }
-
-        .test-buttons button {
-            margin-right: 10px;
-        }
-    </style>
+@media(max-width: 700px) { .prefill-btn { flex: 1 1 100%; } }
+</style>
 </head>
 <body>
-    <div class="marquee-container">
-        <h2>Welcome.</h2>
-        <h3>Enter Customer Details To Predict Customer Churn Probability</h3>
+
+<div class="header">
+    <h1>Customer Churn Prediction</h1>
+    <h3>Enter customer details to predict churn probability</h3>
+</div>
+
+<div class="container">
+
+    <div class="prefill-buttons">
+        <button type="button" class="prefill-btn prefill-churn" onclick="fillChurn()">Churn Customer</button>
+        <button type="button" class="prefill-btn prefill-nonchurn" onclick="fillNonChurn()">Non-Churn Customer</button>
     </div>
 
-    <div class="container">
-        <form method="POST" action="{{ url_for('predict') }}">
-            
-            <!-- Pre-fill Test Buttons -->
-            <div class="test-buttons">
-                <button type="button" class="btn-primary" onclick="
-                    document.getElementById('query1').value='1';
-                    document.getElementById('query2').value='90';
-                    document.getElementById('query3').value='1000';
-                    document.getElementById('query4').value='Male';
-                    document.getElementById('query5').value='No';
-                    document.getElementById('query6').value='No';
-                    document.getElementById('query7').value='Yes';
-                    document.getElementById('query8').value='No';
-                    document.getElementById('query9').value='Fiber optic';
-                    document.getElementById('query10').value='No';
-                    document.getElementById('query11').value='No';
-                    document.getElementById('query12').value='No';
-                    document.getElementById('query13').value='No';
-                    document.getElementById('query14').value='Yes';
-                    document.getElementById('query15').value='Yes';
-                    document.getElementById('query16').value='Month-to-month';
-                    document.getElementById('query17').value='Yes';
-                    document.getElementById('query18').value='Electronic check';
-                    document.getElementById('query19').value='5';
-                ">Fill – Likely to Churn 🔴</button>
-
-                <button type="button" class="btn-primary" style="background-color: #16a34a;" onclick="
-                    document.getElementById('query1').value='0';
-                    document.getElementById('query2').value='50';
-                    document.getElementById('query3').value='2500';
-                    document.getElementById('query4').value='Female';
-                    document.getElementById('query5').value='Yes';
-                    document.getElementById('query6').value='Yes';
-                    document.getElementById('query7').value='Yes';
-                    document.getElementById('query8').value='Yes';
-                    document.getElementById('query9').value='DSL';
-                    document.getElementById('query10').value='Yes';
-                    document.getElementById('query11').value='Yes';
-                    document.getElementById('query12').value='Yes';
-                    document.getElementById('query13').value='Yes';
-                    document.getElementById('query14').value='No';
-                    document.getElementById('query15').value='No';
-                    document.getElementById('query16').value='Two year';
-                    document.getElementById('query17').value='No';
-                    document.getElementById('query18').value='Bank transfer';
-                    document.getElementById('query19').value='48';
-                ">Fill – Likely to Stay 🟢</button>
-            </div>
-
-            <!-- Full Form Fields -->
-            <div class="form-group">
-                <label for="query1">SeniorCitizen:</label>
-                <select class="form-control" id="query1" name="query1">
-                    <option value="0">No</option>
-                    <option value="1">Yes</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="query2">MonthlyCharges:</label>
-                <input type="number" class="form-control" id="query2" name="query2" required>
-            </div>
-            <div class="form-group">
-                <label for="query3">TotalCharges:</label>
-                <input type="number" class="form-control" id="query3" name="query3" required>
-            </div>
-            <div class="form-group">
-                <label for="query4">Gender:</label>
-                <select class="form-control" id="query4" name="query4">
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="query5">Partner:</label>
-                <select class="form-control" id="query5" name="query5">
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="query6">Dependents:</label>
-                <select class="form-control" id="query6" name="query6">
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="query7">PhoneService:</label>
-                <select class="form-control" id="query7" name="query7">
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="query8">MultipleLines:</label>
-                <select class="form-control" id="query8" name="query8">
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="query9">InternetService:</label>
-                <select class="form-control" id="query9" name="query9">
-                    <option value="DSL">DSL</option>
-                    <option value="Fiber optic">Fiber optic</option>
-                    <option value="No">No</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="query10">OnlineSecurity:</label>
-                <select class="form-control" id="query10" name="query10">
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="query11">OnlineBackup:</label>
-                <select class="form-control" id="query11" name="query11">
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="query12">DeviceProtection:</label>
-                <select class="form-control" id="query12" name="query12">
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="query13">TechSupport:</label>
-                <select class="form-control" id="query13" name="query13">
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="query14">StreamingTV:</label>
-                <select class="form-control" id="query14" name="query14">
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="query15">StreamingMovies:</label>
-                <select class="form-control" id="query15" name="query15">
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="query16">Contract:</label>
-                <select class="form-control" id="query16" name="query16">
-                    <option value="Month-to-month">Month-to-month</option>
-                    <option value="One year">One year</option>
-                    <option value="Two year">Two year</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="query17">PaperlessBilling:</label>
-                <select class="form-control" id="query17" name="query17">
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="query18">PaymentMethod:</label>
-                <select class="form-control" id="query18" name="query18">
-                    <option value="Electronic check">Electronic check</option>
-                    <option value="Mailed check">Mailed check</option>
-                    <option value="Bank transfer">Bank transfer</option>
-                    <option value="Credit card">Credit card</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="query19">Tenure:</label>
-                <input type="number" class="form-control" id="query19" name="query19" required>
-            </div>
-
-            <button type="submit" class="btn-primary">SUBMIT</button>
-        </form>
-
-        <!-- Output Boxes -->
-        <div class="output-box {% if 'churned' in output1 %}churn{% else %}safe{% endif %}" id="output1">
-            {{output1}}
-        </div>
-        <div class="output-box {% if 'churned' in output1 %}churn{% else %}safe{% endif %}" id="output2">
-            {{output2}}
-        </div>
+    <!-- Step Indicator & Progress -->
+    <div class="step-indicator" id="stepIndicator">Step 1 of 3</div>
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
     </div>
+
+    <form method="POST" action="{{ url_for('predict') }}">
+
+        <!-- Step 1: Customer Info -->
+        <div class="step">
+            <div class="form-group"><label>SeniorCitizen</label><select id="query1" name="query1"><option value="0">No</option><option value="1">Yes</option></select></div>
+            <div class="form-group"><label>Gender</label><select id="query4" name="query4"><option value="Male">Male</option><option value="Female">Female</option></select></div>
+            <div class="form-group"><label>Partner</label><select id="query5" name="query5"><option value="Yes">Yes</option><option value="No">No</option></select></div>
+            <div class="form-group"><label>Dependents</label><select id="query6" name="query6"><option value="Yes">Yes</option><option value="No">No</option></select></div>
+            <button type="button" class="next-btn" onclick="nextStep()">Next</button>
+        </div>
+
+        <!-- Step 2: Services -->
+        <div class="step">
+            <div class="form-group"><label>PhoneService</label><select id="query7" name="query7"><option value="Yes">Yes</option><option value="No">No</option></select></div>
+            <div class="form-group"><label>MultipleLines</label><select id="query8" name="query8"><option value="Yes">Yes</option><option value="No">No</option></select></div>
+            <div class="form-group"><label>InternetService</label><select id="query9" name="query9"><option value="DSL">DSL</option><option value="Fiber optic">Fiber optic</option><option value="No">No</option></select></div>
+            <div class="form-group"><label>OnlineSecurity</label><select id="query10" name="query10"><option value="Yes">Yes</option><option value="No">No</option></select></div>
+            <div class="form-group"><label>OnlineBackup</label><select id="query11" name="query11"><option value="Yes">Yes</option><option value="No">No</option></select></div>
+            <div class="form-group"><label>DeviceProtection</label><select id="query12" name="query12"><option value="Yes">Yes</option><option value="No">No</option></select></div>
+            <div class="form-group"><label>TechSupport</label><select id="query13" name="query13"><option value="Yes">Yes</option><option value="No">No</option></select></div>
+            <div class="form-group"><label>StreamingTV</label><select id="query14" name="query14"><option value="Yes">Yes</option><option value="No">No</option></select></div>
+            <div class="form-group"><label>StreamingMovies</label><select id="query15" name="query15"><option value="Yes">Yes</option><option value="No">No</option></select></div>
+            <button type="button" class="prev-btn" onclick="prevStep()">Previous</button>
+            <button type="button" class="next-btn" onclick="nextStep()">Next</button>
+        </div>
+
+        <!-- Step 3: Billing & Contract -->
+        <div class="step">
+            <div class="form-group"><label>Contract</label><select id="query16" name="query16"><option value="Month-to-month">Month-to-month</option><option value="One year">One year</option><option value="Two year">Two year</option></select></div>
+            <div class="form-group"><label>PaperlessBilling</label><select id="query17" name="query17"><option value="Yes">Yes</option><option value="No">No</option></select></div>
+            <div class="form-group"><label>PaymentMethod</label><select id="query18" name="query18"><option value="Electronic check">Electronic check</option><option value="Mailed check">Mailed check</option><option value="Bank transfer">Bank transfer</option><option value="Credit card">Credit card</option></select></div>
+            <div class="form-group"><label>MonthlyCharges</label><input type="number" id="query2" name="query2" required></div>
+            <div class="form-group"><label>TotalCharges</label><input type="number" id="query3" name="query3" required></div>
+            <div class="form-group"><label>Tenure</label><input type="number" id="query19" name="query19" required></div>
+            <button type="button" class="prev-btn" onclick="prevStep()">Previous</button>
+            <button type="submit" class="submit-btn">Submit</button>
+        </div>
+
+    </form>
+
+    <div id="output1" class="output-box">{{ output1 }}</div>
+    <div id="output2" class="output-box">{{ output2 }}</div>
+</div>
+
+<script>
+var currentStep = 0;
+showStep(currentStep);
+
+function showStep(n) {
+    var steps = document.getElementsByClassName("step");
+    steps[n].style.display = "block";
+
+    // Progress bar
+    var progress = ((n+1)/steps.length)*100;
+    document.getElementById("progressBar").style.width = progress+"%";
+    document.getElementById("stepIndicator").innerText = "Step "+(n+1)+" of "+steps.length;
+
+    // Hide other steps
+    for(var i=0;i<steps.length;i++){
+        if(i!=n) steps[i].style.display="none";
+    }
+}
+
+function nextStep() {
+    var steps = document.getElementsByClassName("step");
+    if(currentStep < steps.length-1) { 
+        currentStep++; 
+        showStep(currentStep); 
+        window.scrollTo({ top: 0, behavior: 'smooth' }); // auto scroll to top
+    }
+}
+
+function prevStep() {
+    if(currentStep > 0) { 
+        currentStep--; 
+        showStep(currentStep); 
+        window.scrollTo({ top: 0, behavior: 'smooth' }); // auto scroll to top
+    }
+}
+
+
+// Color-coded output
+function setOutputColor() {
+    const outputDiv = document.getElementById("output1");
+    if (!outputDiv) return;
+    const text = outputDiv.innerText.toLowerCase();
+    if(text.includes("likely to be churned")) outputDiv.style.backgroundColor="#dc2626";
+    else if(text.includes("likely to continue")) outputDiv.style.backgroundColor="#16a34a";
+    else outputDiv.style.backgroundColor="#1e3a8a";
+    outputDiv.style.color="white";
+}
+setOutputColor();
+
+// Pre-fill buttons
+function fillChurn() {
+    document.getElementById("query1").value = "1";
+    document.getElementById("query2").value = 90;
+    document.getElementById("query3").value = 4000;
+    document.getElementById("query4").value = "Female";
+    document.getElementById("query5").value = "No";
+    document.getElementById("query6").value = "No";
+    document.getElementById("query7").value = "Yes";
+    document.getElementById("query8").value = "No";
+    document.getElementById("query9").value = "Fiber optic";
+    document.getElementById("query10").value = "No";
+    document.getElementById("query11").value = "No";
+    document.getElementById("query12").value = "No";
+    document.getElementById("query13").value = "No";
+    document.getElementById("query14").value = "Yes";
+    document.getElementById("query15").value = "Yes";
+    document.getElementById("query16").value = "Month-to-month";
+    document.getElementById("query17").value = "Yes";
+    document.getElementById("query18").value = "Electronic check";
+    document.getElementById("query19").value = 5;
+}
+
+function fillNonChurn() {
+    document.getElementById("query1").value = "0";
+    document.getElementById("query2").value = 40;
+    document.getElementById("query3").value = 1200;
+    document.getElementById("query4").value = "Male";
+    document.getElementById("query5").value = "Yes";
+    document.getElementById("query6").value = "Yes";
+    document.getElementById("query7").value = "Yes";
+    document.getElementById("query8").value = "Yes";
+    document.getElementById("query9").value = "DSL";
+    document.getElementById("query10").value = "Yes";
+    document.getElementById("query11").value = "Yes";
+    document.getElementById("query12").value = "Yes";
+    document.getElementById("query13").value = "Yes";
+    document.getElementById("query14").value = "No";
+    document.getElementById("query15").value = "No";
+    document.getElementById("query16").value = "Two year";
+    document.getElementById("query17").value = "No";
+    document.getElementById("query18").value = "Bank transfer";
+    document.getElementById("query19").value = 36;
+}
+</script>
+
 </body>
 </html>
