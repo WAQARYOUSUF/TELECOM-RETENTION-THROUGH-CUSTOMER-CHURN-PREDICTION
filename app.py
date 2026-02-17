@@ -4,7 +4,8 @@ import pandas as pd
 from flask import Flask, request, render_template
 import pickle
 
-app = Flask(__name__, debug=True)
+app = Flask(__name__)
+
 
 
 # Load dataset (used for dummy alignment)
@@ -124,4 +125,6 @@ def predict():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=10000, debug=True)
+
+
