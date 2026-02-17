@@ -87,7 +87,9 @@ Customer-Churn-Prediction/
 ├── retrain_model.py   (optional)
 ├── requirements.txt
 ├── Procfile
+├── runtime.txt
 ├── README.md
+├── .python-version
 ├── model.sav
 ├── model_columns.pkl
 ├── first_telc.csv
